@@ -3,25 +3,12 @@ set currentDate to current date
 set yearMonth to (year of currentDate as string) & "-" & text -2 thru -1 of ("0" & (month of currentDate as number)) & "-desktop"
 set fullDate to (year of currentDate as string) & "-" & text -2 thru -1 of ("0" & (month of currentDate as number)) & "-" & text -2 thru -1 of ("0" & (day of currentDate as number))
 
--- Correcting the time formatting
-set hourString to (hours of currentDate as number)
-set minuteString to (minutes of currentDate as number)
-if hourString < 10 then
-	set hourString to "0" & hourString
-end if
-if minuteString < 10 then
-	set minuteString to "0" & minuteString
-end if
-
-set currentTime to hourString & "-" & minuteString
-
 -- Define the desktop path
 set desktopPath to POSIX path of (path to desktop folder)
 
 -- Define full paths for the folder structure
 set level1Folder to desktopPath & yearMonth
 set level2Folder to level1Folder & "/" & fullDate
-set level3Folder to level2Folder & "/" & currentTime
 
 -- Function to create a folder if it does not exist
 on createFolder(folderPath)
@@ -53,11 +40,10 @@ if checkDesktopCondition(desktopPath, yearMonth) then
 	-- Create necessary folders
 	createFolder(level1Folder)
 	createFolder(level2Folder)
-	createFolder(level3Folder)
 	
 	-- Move all non-hidden files and non-volume folders to the new folder
 	tell application "Finder"
-		set newFolder to POSIX file level3Folder as alias
+		set newFolder to POSIX file level2Folder as alias
 		set newFolderName to name of newFolder
 		set theFiles to every file of desktop where its name does not start with "." and kind is not "Volume"
 		set theFolders to every folder of desktop where its name does not start with "." and kind is not "Volume" and its name is not newFolderName and its name is not yearMonth and its name is not fullDate
